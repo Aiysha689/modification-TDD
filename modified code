@@ -1,0 +1,139 @@
+from abc import ABC, abstractmethod
+from datetime import date
+
+class Serviceable(ABC):
+    @abstractmethod
+    def needs_service(self) -> bool:
+        pass
+
+class CarModel:
+    def __init__(self, modelId: str, engine: 'Engine', battery: 'Battery', tire: 'Tire'):
+        self.modelId = modelId
+        self.engine = engine
+        self.battery = battery
+        self.tire = tire
+
+    def getModelId(self) -> str:
+        return self.modelId
+
+    def setModelId(self, id: str) -> None:
+        self.modelId = id
+
+    def getEngine(self) -> 'Engine':
+        return self.engine
+
+    def setEngine(self, engine: 'Engine') -> None:
+        self.engine = engine
+
+    def getBattery(self) -> 'Battery':
+        return self.battery
+
+    def setBattery(self, battery: 'Battery') -> None:
+        self.battery = battery
+
+    def getTire(self) -> 'Tire':
+        return self.tire
+
+    def setTire(self, tire: 'Tire') -> None:
+        self.tire = tire
+
+    def needs_service(self) -> bool:
+        return (
+            self.engine.needs_service()
+            or self.battery.needs_service()
+            or self.tire.needs_service()
+        )
+
+class Engine(Serviceable):
+    def __init__(self, engineId: str):
+        self.engineId = engineId
+
+    def getEngineId(self) -> str:
+        return self.engineId
+
+    def setEngineId(self, id: str) -> None:
+        self.engineId = id
+
+    def needs_service(self) -> bool:
+        pass
+
+class Battery(Serviceable):
+    def __init__(self, batteryId: str):
+        self.batteryId = batteryId
+
+    def getBatteryId(self) -> str:
+        return self.batteryId
+
+    def setBatteryId(self, id: str) -> None:
+        self.batteryId = id
+
+    def needs_service(self) -> bool:
+        pass
+
+class SpindlerBattery(Battery):
+    def __init__(self, batteryId: str, last_service_date: date, current_date: date):
+        super().__init__(batteryId)
+        self.last_service_date = last_service_date
+        self.current_date = current_date
+
+    def needs_service(self) -> bool:
+        # Logic to determine if SpindlerBattery needs service based on date
+        pass
+
+class NubbinBattery(Battery):
+    def __init__(self, batteryId: str, last_service_date: date, current_date: date):
+        super().__init__(batteryId)
+        self.last_service_date = last_service_date
+        self.current_date = current_date
+
+    def needs_service(self) -> bool:
+        # Logic to determine if NubbinBattery needs service based on date
+        pass
+
+class Tire(Serviceable):
+    def __init__(self, tireId: str, wear_array: list):
+        self.tireId = tireId
+        self.wear_array = wear_array
+
+    def getTireId(self) -> str:
+        return self.tireId
+
+    def setTireId(self, id: str) -> None:
+        self.tireId = id
+
+    def getWearArray(self) -> list:
+        return self.wear_array
+
+    def setWearArray(self, wear_array: list) -> None:
+        self.wear_array = wear_array
+
+    def needs_service(self) -> bool:
+        pass
+
+class CarriganTire(Tire):
+    def __init__(self, tireId: str, wear_array: list):
+        super().__init__(tireId, wear_array)
+
+    def needs_service(self) -> bool:
+        return any(wear >= 0.9 for wear in self.wear_array)
+
+class OctoprimeTire(Tire):
+    def __init__(self, tireId: str, wear_array: list):
+        super().__init__(tireId, wear_array)
+
+    def needs_service(self) -> bool:
+        return sum(self.wear_array) >= 3
+
+# Example usage:
+today = date.today()
+calliope = CarModel("Calliope", CapuletEngine("Capulet Engine"), SpindlerBattery("Spindler Battery", today, today), CarriganTire("Carrigan Tire", [0.8, 0.9, 0.85, 0.95]))
+glissade = CarModel("Glissade", WilloughbyEngine("Willoughby Engine"), SpindlerBattery("Spindler Battery", today, today), OctoprimeTire("Octoprime Tire", [0.7, 0.8, 0.75, 0.9]))
+palindrome = CarModel("Palindrome", SternmanEngine("Sternman Engine"), SpindlerBattery("Spindler Battery", today, today), CarriganTire("Carrigan Tire", [0.9, 0.9, 0.9, 0.9]))
+rorschach = CarModel("Rorschach", WilloughbyEngine("Willoughby Engine"), NubbinBattery("Nubbin Battery", today, today), OctoprimeTire("Octoprime Tire", [0.6, 0.7, 0.65, 0.75]))
+thovex = CarModel("Thovex", CapuletEngine("Capulet Engine"), NubbinBattery("Nubbin Battery", today, today), CarriganTire("Carrigan Tire", [0.85, 0.9, 0.95, 0.9]))
+
+print(calliope.needs_service())  # Check if Calliope needs service
+print(glissade.needs_service())  # Check if Glissade needs service
+print(palindrome.needs_service())  # Check if Palindrome needs service
+print(rorschach.needs_service())  # Check if Rorschach needs service
+print(thovex.needs_service())  # Check if Thovex needs service
